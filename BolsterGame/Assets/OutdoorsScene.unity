@@ -778,6 +778,12 @@ MonoBehaviour:
   minSpeedPenalty: 0.8
   maxMassForMinPenalty: 2
   maxMassForMaxPenalty: 15
+  minHoldDistance: 0.25
+  collisionCheckRadius: 0.3
+  maxPushForce: 5
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!1 &1003261921
 GameObject:
   m_ObjectHideFlags: 0

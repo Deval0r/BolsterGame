@@ -18,17 +18,27 @@ public class ObjectPickup : MonoBehaviour
     [SerializeField] private float maxMassForMinPenalty = 2f; // Mass at which minimum penalty is applied
     [SerializeField] private float maxMassForMaxPenalty = 10f; // Mass at which maximum penalty is applied
 
+    [Header("Collision Settings")]
+    [SerializeField] private float minHoldDistance = 0.5f; // Minimum distance to hold objects
+    [SerializeField] private float collisionCheckRadius = 0.3f; // Radius to check for collisions
+    [SerializeField] private float maxPushForce = 5f; // Maximum force before dropping object
+    [SerializeField] private LayerMask collisionLayers; // Layers to check for collisions
+
     private Camera mainCamera;
     private GameObject heldObject;
     private Rigidbody heldRigidbody;
     private Vector3 targetPosition;
     private bool wasHoldingLastFrame;
     private Movement playerMovement; // Reference to Movement script
+    private Vector3 lastSafePosition;
+    private float currentHoldDistance;
 
     private void Start()
     {
         mainCamera = Camera.main;
         playerMovement = GetComponent<Movement>(); // Get reference to Movement script
+        currentHoldDistance = holdDistance;
+        lastSafePosition = transform.position;
     }
 
     private void Update()
@@ -65,8 +75,32 @@ public class ObjectPickup : MonoBehaviour
             Rigidbody rb = hit.collider.GetComponent<Rigidbody>();
             if (rb != null && rb.mass <= maxHoldMass)
             {
+                // Check if the initial pickup position is valid
+                Vector3 initialPosition = mainCamera.transform.position + mainCamera.transform.forward * holdDistance;
+                if (Physics.CheckSphere(initialPosition, collisionCheckRadius, collisionLayers))
+                {
+                    // If initial position is blocked, try to find a closer valid position
+                    float testDistance = holdDistance;
+                    while (testDistance > minHoldDistance)
+                    {
+                        initialPosition = mainCamera.transform.position + mainCamera.transform.forward * testDistance;
+                        if (!Physics.CheckSphere(initialPosition, collisionCheckRadius, collisionLayers))
+                        {
+                            break;
+                        }
+                        testDistance -= 0.1f;
+                    }
+
+                    // If we couldn't find a valid position, don't pick up
+                    if (testDistance <= minHoldDistance)
+                    {
+                        return;
+                    }
+                }
+
                 heldObject = hit.collider.gameObject;
                 heldRigidbody = rb;
+                currentHoldDistance = holdDistance;
                 
                 // Disable gravity and make it kinematic while held
                 heldRigidbody.useGravity = false;
@@ -80,8 +114,65 @@ public class ObjectPickup : MonoBehaviour
 
     private void UpdateHeldObjectPosition()
     {
-        // Calculate the target position in front of the camera
-        targetPosition = mainCamera.transform.position + mainCamera.transform.forward * holdDistance;
+        if (heldObject == null) return;
+
+        // Calculate the ideal target position
+        Vector3 idealPosition = mainCamera.transform.position + mainCamera.transform.forward * currentHoldDistance;
+        
+        // Check for collisions between current position and ideal position
+        Vector3 direction = idealPosition - heldObject.transform.position;
+        float distance = direction.magnitude;
+        
+        if (distance > 0.01f) // Only check if we're actually moving
+        {
+            RaycastHit[] hits = Physics.SphereCastAll(
+                heldObject.transform.position,
+                collisionCheckRadius,
+                direction.normalized,
+                distance,
+                collisionLayers
+            );
+
+            // Check if any hit is not the held object itself
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.gameObject != heldObject && hit.collider.gameObject != gameObject)
+                {
+                    // If we hit something, reduce the hold distance
+                    float hitDistance = hit.distance;
+                    currentHoldDistance = Mathf.Min(currentHoldDistance, hitDistance);
+                    
+                    // If we're too close to the player, drop the object
+                    if (hitDistance < minHoldDistance)
+                    {
+                        DropObject();
+                        return;
+                    }
+                    
+                    // If the object is pushing against something with significant force, drop it
+                    if (heldRigidbody != null)
+                    {
+                        float pushForce = heldRigidbody.mass * Physics.gravity.magnitude;
+                        if (pushForce > maxPushForce)
+                        {
+                            DropObject();
+                            return;
+                        }
+                    }
+                    
+                    break;
+                }
+            }
+        }
+
+        // If no collisions, gradually return to ideal hold distance
+        if (currentHoldDistance < holdDistance)
+        {
+            currentHoldDistance = Mathf.Lerp(currentHoldDistance, holdDistance, Time.deltaTime * smoothSpeed);
+        }
+
+        // Calculate final target position with current hold distance
+        targetPosition = mainCamera.transform.position + mainCamera.transform.forward * currentHoldDistance;
 
         // Smoothly move the object to the target position
         heldObject.transform.position = Vector3.Lerp(heldObject.transform.position, targetPosition, smoothSpeed * Time.deltaTime);
