@@ -12,15 +12,23 @@ public class ObjectPickup : MonoBehaviour
     [SerializeField] private float throwForce = 10f; // How hard to throw when releasing
     [SerializeField] private float maxHoldMass = 10f; // Maximum mass of objects that can be picked up
 
+    [Header("Movement Penalty Settings")]
+    [SerializeField] private float maxSpeedPenalty = 0.25f; // Minimum speed multiplier (1/4 speed)
+    [SerializeField] private float minSpeedPenalty = 0.75f; // Maximum speed multiplier (3/4 speed)
+    [SerializeField] private float maxMassForMinPenalty = 2f; // Mass at which minimum penalty is applied
+    [SerializeField] private float maxMassForMaxPenalty = 10f; // Mass at which maximum penalty is applied
+
     private Camera mainCamera;
     private GameObject heldObject;
     private Rigidbody heldRigidbody;
     private Vector3 targetPosition;
     private bool wasHoldingLastFrame;
+    private Movement playerMovement; // Reference to Movement script
 
     private void Start()
     {
         mainCamera = Camera.main;
+        playerMovement = GetComponent<Movement>(); // Get reference to Movement script
     }
 
     private void Update()
@@ -54,7 +62,6 @@ public class ObjectPickup : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, pickupRange, pickupableLayers))
         {
-            // Check if the object has a rigidbody
             Rigidbody rb = hit.collider.GetComponent<Rigidbody>();
             if (rb != null && rb.mass <= maxHoldMass)
             {
@@ -64,6 +71,9 @@ public class ObjectPickup : MonoBehaviour
                 // Disable gravity and make it kinematic while held
                 heldRigidbody.useGravity = false;
                 heldRigidbody.isKinematic = true;
+
+                // Apply movement penalty based on mass
+                ApplyMovementPenalty(rb.mass);
             }
         }
     }
@@ -92,7 +102,20 @@ public class ObjectPickup : MonoBehaviour
             heldRigidbody.AddForce(mainCamera.transform.forward * throwForce, ForceMode.Impulse);
         }
 
+        // Reset movement speed when dropping object
+        playerMovement.ResetSpeedMultiplier();
+
         heldObject = null;
         heldRigidbody = null;
+    }
+
+    private void ApplyMovementPenalty(float mass)
+    {
+        // Calculate speed multiplier based on mass
+        float normalizedMass = Mathf.Clamp01((mass - maxMassForMinPenalty) / (maxMassForMaxPenalty - maxMassForMinPenalty));
+        float speedMultiplier = Mathf.Lerp(minSpeedPenalty, maxSpeedPenalty, normalizedMass);
+        
+        // Apply the speed multiplier to the player's movement
+        playerMovement.SetSpeedMultiplier(speedMultiplier);
     }
 } 

@@ -20,6 +20,7 @@ public class Movement : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
     private float gravity = -9.81f;
+    private float speedMultiplier = 1f;
 
     void Start()
     {
@@ -51,7 +52,7 @@ public class Movement : MonoBehaviour
 
         // Calculate movement direction relative to camera
         Vector3 move = cameraRight * x + cameraForward * z;
-        controller.Move(move * walkSpeed * Time.deltaTime);
+        controller.Move(move * walkSpeed * speedMultiplier * Time.deltaTime);
 
         // Jump
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -62,5 +63,15 @@ public class Movement : MonoBehaviour
         // Apply gravity
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        speedMultiplier = multiplier;
+    }
+
+    public void ResetSpeedMultiplier()
+    {
+        speedMultiplier = 1f;
     }
 }
