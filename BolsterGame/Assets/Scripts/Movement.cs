@@ -7,6 +7,9 @@ public class Movement : MonoBehaviour
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float mouseSensitivity = 2f;
     
+    // Make mouseSensitivity accessible to other scripts
+    public float MouseSensitivity => mouseSensitivity;
+
     [Header("Ground Check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundDistance = 0.4f;
@@ -34,21 +37,20 @@ public class Movement : MonoBehaviour
             velocity.y = -2f;
         }
 
-        // Mouse look
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        Camera.main.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX);
-
         // Movement
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        // Get the camera's forward and right vectors, but ignore the Y component
+        Vector3 cameraForward = Camera.main.transform.forward;
+        Vector3 cameraRight = Camera.main.transform.right;
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Calculate movement direction relative to camera
+        Vector3 move = cameraRight * x + cameraForward * z;
         controller.Move(move * walkSpeed * Time.deltaTime);
 
         // Jump
