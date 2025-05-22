@@ -33,6 +33,9 @@ public class ObjectPickup : MonoBehaviour
     private Vector3 lastSafePosition;
     private float currentHoldDistance;
 
+    public bool IsHoldingObject => heldObject != null;
+    public float HeldObjectMass => heldRigidbody != null ? heldRigidbody.mass : 0f;
+
     private void Start()
     {
         mainCamera = Camera.main;

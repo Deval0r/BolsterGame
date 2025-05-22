@@ -580,6 +580,12 @@ MonoBehaviour:
   target: {fileID: 585171826}
   springStrength: 300
   damping: 0.5
+  maxMassForMinSmooth: 2
+  maxMassForMaxSmooth: 15
+  minSmoothTime: 0.15
+  maxSmoothTime: 2
+  baseSmoothTime: 0.1
+  minRotationSpeed: 1000
   maxRotationSpeed: 1000
 --- !u!4 &536683358
 Transform:
@@ -774,7 +780,7 @@ MonoBehaviour:
     m_Bits: 1
   throwForce: 1
   maxHoldMass: 15
-  maxSpeedPenalty: 0.2
+  maxSpeedPenalty: 0.15
   minSpeedPenalty: 0.8
   maxMassForMinPenalty: 2
   maxMassForMaxPenalty: 15
