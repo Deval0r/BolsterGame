@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: bbda83e2a2b78451daaa888db5d50cf0, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -177,7 +177,7 @@ Light:
   m_GameObject: {fileID: 157207112}
   m_Enabled: 1
   serializedVersion: 11
-  m_Type: 1
+  m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 130000
   m_Range: 10
@@ -905,6 +905,7 @@ MonoBehaviour:
     m_Bits: 8
   boardPrefab: {fileID: 1146694197549502599, guid: 712b694a5dcfd43c2a6b269047abdf0e, type: 3}
   boardPlacementCooldown: 1.5
+  holdTimeRequired: 0.5
   boardKey: 323
 --- !u!1 &609762081
 GameObject:

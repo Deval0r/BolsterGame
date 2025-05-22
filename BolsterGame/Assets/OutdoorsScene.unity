@@ -177,9 +177,9 @@ Light:
   m_GameObject: {fileID: 157207112}
   m_Enabled: 1
   serializedVersion: 11
-  m_Type: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 130000
+  m_Type: 2
+  m_Color: {r: 1, g: 0.10849059, b: 0.10849059, a: 1}
+  m_Intensity: 714.2833
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -224,13 +224,13 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6500
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 10.353554}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 2.5
-  m_LightUnit: 2
+  m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 0
 --- !u!4 &157207114
