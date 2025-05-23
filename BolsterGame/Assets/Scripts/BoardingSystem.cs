@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class BoardingSystem : MonoBehaviour
 {
@@ -9,12 +10,15 @@ public class BoardingSystem : MonoBehaviour
     [SerializeField] private float boardPlacementCooldown = 0.5f;
     [SerializeField] private float holdTimeRequired = 0.5f; // Time required to hold before placing
     [SerializeField] private KeyCode boardKey = KeyCode.Mouse0;
+    [SerializeField] private float maxRandomRotation = 10f; // Maximum random rotation in degrees
+    [SerializeField] private float boardSpacing = 0.5f; // Space between boards
 
     private Camera mainCamera;
     private float lastBoardTime;
     private bool isHoldingBoardKey;
     private float holdStartTime;
     private HotbarSystem hotbarSystem;
+    private Dictionary<GameObject, List<GameObject>> windowBoards = new Dictionary<GameObject, List<GameObject>>();
 
     private void Start()
     {
@@ -94,24 +98,46 @@ public class BoardingSystem : MonoBehaviour
 
     private void PlaceBoard(RaycastHit hit)
     {
+        GameObject window = hit.collider.gameObject;
+        
+        // Initialize the list for this window if it doesn't exist
+        if (!windowBoards.ContainsKey(window))
+        {
+            windowBoards[window] = new List<GameObject>();
+        }
+
+        // Check if we've reached the maximum number of boards for this window
+        if (windowBoards[window].Count >= 3)
+        {
+            Debug.Log("Maximum number of boards reached for this window!");
+            return;
+        }
+
         // Calculate the position and rotation for the board
-        Vector3 boardPosition = hit.point;
-        
-        // Get the window's forward direction (normal of the hit surface)
         Vector3 windowForward = hit.normal;
+        Vector3 windowRight = Vector3.Cross(windowForward, Vector3.up).normalized;
+        Vector3 windowUp = Vector3.Cross(windowRight, windowForward).normalized;
+
+        // Calculate offset based on number of existing boards (vertical spacing)
+        float offset = (windowBoards[window].Count - 1) * boardSpacing;
+        Vector3 boardPosition = hit.point + windowUp * offset;
+
+        // Calculate base rotation
+        Quaternion baseRotation = Quaternion.LookRotation(windowForward);
         
-        // Calculate the rotation to align with the window
-        Quaternion boardRotation = Quaternion.LookRotation(windowForward);
-        
+        // Add random rotation around the forward axis
+        float randomRotation = Random.Range(-maxRandomRotation, maxRandomRotation);
+        Quaternion finalRotation = baseRotation * Quaternion.Euler(0, 0, randomRotation);
+
         // Instantiate the board
-        GameObject board = Instantiate(boardPrefab, boardPosition, boardRotation);
+        GameObject board = Instantiate(boardPrefab, boardPosition, finalRotation);
 
         // Parent the board to the window
-        board.transform.parent = hit.collider.transform;
+        board.transform.parent = window.transform;
 
-        // Adjust the board's position to be centered on the window
-        board.transform.localPosition = Vector3.zero;
-        
-        // No need for additional rotation since the board prefab should be oriented correctly
+        // Add to the list of boards for this window
+        windowBoards[window].Add(board);
+
+        Debug.Log($"Placed board {windowBoards[window].Count}/3 on window");
     }
 } 
