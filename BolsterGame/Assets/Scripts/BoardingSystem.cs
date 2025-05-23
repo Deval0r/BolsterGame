@@ -6,6 +6,7 @@ public class BoardingSystem : MonoBehaviour
     [Header("Boarding Settings")]
     [SerializeField] private float maxBoardDistance = 3f;
     [SerializeField] private LayerMask windowLayer;
+    [SerializeField] private LayerMask boardLayer; // Add layer mask for boards
     [SerializeField] private GameObject boardPrefab;
     [SerializeField] private float boardPlacementCooldown = 0.5f;
     [SerializeField] private float holdTimeRequired = 0.5f; // Time required to hold before placing
@@ -16,6 +17,8 @@ public class BoardingSystem : MonoBehaviour
     [Header("Audio Settings")]
     [SerializeField] private AudioSource playerAudioSource;
     [SerializeField] private AudioClip boardPlacementSound;
+    [SerializeField] private AudioClip boardSwipeSound;
+    [SerializeField] private AudioClip boardDestroySound;
 
     private Camera mainCamera;
     private float lastBoardTime;
@@ -25,6 +28,8 @@ public class BoardingSystem : MonoBehaviour
     private Dictionary<GameObject, List<GameObject>> windowBoards = new Dictionary<GameObject, List<GameObject>>();
     private bool isPlayingPlacementSound;
     private bool canPlaceBoard;
+    private GameObject currentTargetWindow;
+    private GameObject currentTargetBoard;
 
     private void Start()
     {
@@ -60,13 +65,44 @@ public class BoardingSystem : MonoBehaviour
                 holdStartTime = Time.time;
                 canPlaceBoard = false;
                 
-                // Start playing placement sound
-                if (playerAudioSource != null && boardPlacementSound != null)
+                // First check for boards
+                RaycastHit boardHit;
+                if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out boardHit, maxBoardDistance, boardLayer))
                 {
-                    playerAudioSource.clip = boardPlacementSound;
-                    playerAudioSource.loop = false;
-                    playerAudioSource.Play();
-                    isPlayingPlacementSound = true;
+                    // Found a board, play destroy sound
+                    currentTargetBoard = boardHit.collider.gameObject;
+                    currentTargetWindow = null;
+                    PlaySound(boardDestroySound);
+                    Debug.Log("Found board to destroy");
+                }
+                else
+                {
+                    // If no board found, check for windows
+                    RaycastHit windowHit;
+                    if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out windowHit, maxBoardDistance, windowLayer))
+                    {
+                        GameObject window = windowHit.collider.gameObject;
+                        if (!windowBoards.ContainsKey(window) || windowBoards[window].Count < 3)
+                        {
+                            // Window is not fully boarded, play placement sound
+                            currentTargetWindow = window;
+                            currentTargetBoard = null;
+                            PlaySound(boardPlacementSound);
+                            Debug.Log("Found window to board");
+                        }
+                        else
+                        {
+                            // Window is fully boarded, play swipe sound
+                            PlaySound(boardSwipeSound);
+                            Debug.Log("Window is fully boarded");
+                        }
+                    }
+                    else
+                    {
+                        // Not looking at anything, play swipe sound
+                        PlaySound(boardSwipeSound);
+                        Debug.Log("Not looking at anything");
+                    }
                 }
             }
         }
@@ -82,6 +118,14 @@ public class BoardingSystem : MonoBehaviour
                 {
                     playerAudioSource.Stop();
                     isPlayingPlacementSound = false;
+                }
+
+                // If we were targeting a board, destroy it
+                if (currentTargetBoard != null)
+                {
+                    Destroy(currentTargetBoard);
+                    currentTargetBoard = null;
+                    Debug.Log("Destroyed board");
                 }
             }
         }
@@ -99,6 +143,17 @@ public class BoardingSystem : MonoBehaviour
 
         // Check for destroyed boards and update counts
         CheckForDestroyedBoards();
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (playerAudioSource != null && clip != null)
+        {
+            playerAudioSource.clip = clip;
+            playerAudioSource.loop = false;
+            playerAudioSource.Play();
+            isPlayingPlacementSound = (clip == boardPlacementSound);
+        }
     }
 
     private void CheckForDestroyedBoards()
@@ -139,23 +194,18 @@ public class BoardingSystem : MonoBehaviour
 
     private void TryPlaceBoard()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, maxBoardDistance, windowLayer))
+        if (currentTargetWindow != null)
         {
-            // Check if we hit a window
-            if (hit.collider.CompareTag("Window"))
+            RaycastHit hit;
+            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, maxBoardDistance, windowLayer))
             {
-                Debug.Log("Hit window, placing board!");
-                PlaceBoard(hit);
+                // Check if we hit the same window
+                if (hit.collider.gameObject == currentTargetWindow)
+                {
+                    Debug.Log("Hit window, placing board!");
+                    PlaceBoard(hit);
+                }
             }
-            else
-            {
-                Debug.Log("Hit something but not a window. Tag: " + hit.collider.tag);
-            }
-        }
-        else
-        {
-            Debug.Log("No window in range");
         }
     }
 
