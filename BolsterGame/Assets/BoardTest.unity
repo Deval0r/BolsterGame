@@ -1074,13 +1074,17 @@ MonoBehaviour:
   boardPrefab: {fileID: 1146694197549502599, guid: 712b694a5dcfd43c2a6b269047abdf0e, type: 3}
   boardPlacementCooldown: 1
   holdTimeRequired: 1.1
+  boardBreakDelay: 0.5
   boardKey: 323
   maxRandomRotation: 7
-  windowHeight: 2
+  heightMultiplier: 0.8
   playerAudioSource: {fileID: 585171831}
   boardPlacementSound: {fileID: 8300000, guid: 73ee66b365bed5948b7e0f79b0d81203, type: 3}
   boardSwipeSound: {fileID: 8300000, guid: ffda018d2604a3a4f87e1c6bdee73bba, type: 3}
   boardDestroySound: {fileID: 8300000, guid: ba4d31ae43e08fa4594c6552c15f7302, type: 3}
+  breakSoundPitchVariation: 0.1
+  placeSoundPitchVariation: 0.05
+  swingSoundPitchVariation: 0.05
 --- !u!82 &585171831
 AudioSource:
   m_ObjectHideFlags: 0

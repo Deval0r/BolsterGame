@@ -10,15 +10,19 @@ public class BoardingSystem : MonoBehaviour
     [SerializeField] private GameObject boardPrefab;
     [SerializeField] private float boardPlacementCooldown = 0.5f;
     [SerializeField] private float holdTimeRequired = 0.5f; // Time required to hold before placing
+    [SerializeField] private float boardBreakDelay = 0.5f; // Time to hold before breaking a board
     [SerializeField] private KeyCode boardKey = KeyCode.Mouse0;
     [SerializeField] private float maxRandomRotation = 10f; // Maximum random rotation in degrees
-    [SerializeField] private float windowHeight = 2f; // Approximate height of the window
+    [SerializeField] private float heightMultiplier = 0.8f; // Multiplier to adjust board spacing relative to window height
 
     [Header("Audio Settings")]
     [SerializeField] private AudioSource playerAudioSource;
     [SerializeField] private AudioClip boardPlacementSound;
     [SerializeField] private AudioClip boardSwipeSound;
     [SerializeField] private AudioClip boardDestroySound;
+    [SerializeField] private float breakSoundPitchVariation = 0.1f;
+    [SerializeField] private float placeSoundPitchVariation = 0.05f;
+    [SerializeField] private float swingSoundPitchVariation = 0.1f;
 
     private Camera mainCamera;
     private float lastBoardTime;
@@ -30,6 +34,8 @@ public class BoardingSystem : MonoBehaviour
     private bool canPlaceBoard;
     private GameObject currentTargetWindow;
     private GameObject currentTargetBoard;
+    private bool isBreakingBoard;
+    private float boardBreakStartTime;
 
     private void Start()
     {
@@ -64,16 +70,19 @@ public class BoardingSystem : MonoBehaviour
                 isHoldingBoardKey = true;
                 holdStartTime = Time.time;
                 canPlaceBoard = false;
+                isBreakingBoard = false;
                 
                 // First check for boards
                 RaycastHit boardHit;
                 if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out boardHit, maxBoardDistance, boardLayer))
                 {
-                    // Found a board, play destroy sound
+                    // Found a board, play swing sound and start break timer
                     currentTargetBoard = boardHit.collider.gameObject;
                     currentTargetWindow = null;
-                    PlaySound(boardDestroySound);
-                    Debug.Log("Found board to destroy");
+                    PlaySound(boardSwipeSound, swingSoundPitchVariation);
+                    isBreakingBoard = true;
+                    boardBreakStartTime = Time.time;
+                    Debug.Log("Found board to break");
                 }
                 else
                 {
@@ -87,20 +96,20 @@ public class BoardingSystem : MonoBehaviour
                             // Window is not fully boarded, play placement sound
                             currentTargetWindow = window;
                             currentTargetBoard = null;
-                            PlaySound(boardPlacementSound);
+                            PlaySound(boardPlacementSound, placeSoundPitchVariation);
                             Debug.Log("Found window to board");
                         }
                         else
                         {
                             // Window is fully boarded, play swipe sound
-                            PlaySound(boardSwipeSound);
+                            PlaySound(boardSwipeSound, swingSoundPitchVariation);
                             Debug.Log("Window is fully boarded");
                         }
                     }
                     else
                     {
                         // Not looking at anything, play swipe sound
-                        PlaySound(boardSwipeSound);
+                        PlaySound(boardSwipeSound, swingSoundPitchVariation);
                         Debug.Log("Not looking at anything");
                     }
                 }
@@ -111,7 +120,7 @@ public class BoardingSystem : MonoBehaviour
             if (isHoldingBoardKey)
             {
                 isHoldingBoardKey = false;
-                lastBoardTime = Time.time; // Reset the cooldown when releasing
+                lastBoardTime = Time.time;
                 
                 // Stop placement sound if it's playing and we didn't place a board
                 if (isPlayingPlacementSound && !canPlaceBoard && playerAudioSource != null)
@@ -120,19 +129,46 @@ public class BoardingSystem : MonoBehaviour
                     isPlayingPlacementSound = false;
                 }
 
-                // If we were targeting a board, destroy it
-                if (currentTargetBoard != null)
+                // Reset breaking state
+                isBreakingBoard = false;
+            }
+        }
+
+        // Check if we're breaking a board
+        if (isBreakingBoard && currentTargetBoard != null)
+        {
+            // Check if we're still looking at the same board
+            RaycastHit boardHit;
+            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out boardHit, maxBoardDistance, boardLayer))
+            {
+                if (boardHit.collider.gameObject == currentTargetBoard)
                 {
-                    Destroy(currentTargetBoard);
-                    currentTargetBoard = null;
-                    Debug.Log("Destroyed board");
+                    // If we've held long enough, break the board
+                    if (Time.time >= boardBreakStartTime + boardBreakDelay)
+                    {
+                        PlaySound(boardDestroySound, breakSoundPitchVariation);
+                        Destroy(currentTargetBoard);
+                        currentTargetBoard = null;
+                        isBreakingBoard = false;
+                        Debug.Log("Board broken");
+                    }
                 }
+                else
+                {
+                    // Looking at a different board, reset break timer
+                    isBreakingBoard = false;
+                }
+            }
+            else
+            {
+                // Not looking at the board anymore, reset break timer
+                isBreakingBoard = false;
             }
         }
 
         if (isHoldingBoardKey && Time.time >= lastBoardTime + boardPlacementCooldown)
         {
-            // Check if we've held long enough
+            // Check if we've held long enough for board placement
             if (Time.time >= holdStartTime + holdTimeRequired)
             {
                 canPlaceBoard = true;
@@ -145,12 +181,14 @@ public class BoardingSystem : MonoBehaviour
         CheckForDestroyedBoards();
     }
 
-    private void PlaySound(AudioClip clip)
+    private void PlaySound(AudioClip clip, float pitchVariation)
     {
         if (playerAudioSource != null && clip != null)
         {
             playerAudioSource.clip = clip;
             playerAudioSource.loop = false;
+            // Apply random pitch variation
+            playerAudioSource.pitch = 1f + Random.Range(-pitchVariation, pitchVariation);
             playerAudioSource.Play();
             isPlayingPlacementSound = (clip == boardPlacementSound);
         }
@@ -231,6 +269,9 @@ public class BoardingSystem : MonoBehaviour
         Vector3 windowRight = Vector3.Cross(windowForward, Vector3.up).normalized;
         Vector3 windowUp = Vector3.Cross(windowRight, windowForward).normalized;
 
+        // Get window height from its scale
+        float windowHeight = window.transform.localScale.y * heightMultiplier;
+        
         // Calculate evenly spaced positions
         float totalHeight = windowHeight;
         float sectionHeight = totalHeight / 4f; // Divide into 4 sections (3 boards with gaps)
