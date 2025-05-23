@@ -313,4 +313,20 @@ public class BoardingSystem : MonoBehaviour
 
         Debug.Log($"Placed board {windowBoards[window].Count}/3 on window");
     }
+
+    public bool CanBoardWindow(GameObject window)
+    {
+        if (window == null) return false;
+        
+        // Check if we're holding the hammer
+        if (!IsHoldingHammer()) return false;
+        
+        // Check if the window is already fully boarded
+        if (windowBoards.ContainsKey(window) && windowBoards[window].Count >= 3)
+        {
+            return false;
+        }
+        
+        return true;
+    }
 } 

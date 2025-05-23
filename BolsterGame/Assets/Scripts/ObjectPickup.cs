@@ -212,4 +212,20 @@ public class ObjectPickup : MonoBehaviour
         // Apply the speed multiplier to the player's movement
         playerMovement.SetSpeedMultiplier(speedMultiplier);
     }
+
+    public bool CanLiftObject(GameObject obj)
+    {
+        if (obj == null) return false;
+        
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+        if (rb == null) return false;
+        
+        // Check if the object's mass is within the liftable range
+        if (rb.mass > maxHoldMass) return false;
+        
+        // Check if the object is on a liftable layer
+        if (((1 << obj.layer) & pickupableLayers) == 0) return false;
+        
+        return true;
+    }
 } 
