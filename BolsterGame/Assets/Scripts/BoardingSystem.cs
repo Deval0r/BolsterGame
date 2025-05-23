@@ -13,12 +13,17 @@ public class BoardingSystem : MonoBehaviour
     [SerializeField] private float maxRandomRotation = 10f; // Maximum random rotation in degrees
     [SerializeField] private float windowHeight = 2f; // Approximate height of the window
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioSource playerAudioSource;
+    [SerializeField] private AudioClip boardPlacementSound;
+
     private Camera mainCamera;
     private float lastBoardTime;
     private bool isHoldingBoardKey;
     private float holdStartTime;
     private HotbarSystem hotbarSystem;
     private Dictionary<GameObject, List<GameObject>> windowBoards = new Dictionary<GameObject, List<GameObject>>();
+    private bool isPlayingPlacementSound;
 
     private void Start()
     {
@@ -27,6 +32,16 @@ public class BoardingSystem : MonoBehaviour
         if (hotbarSystem == null)
         {
             Debug.LogError("HotbarSystem not found on the same GameObject as BoardingSystem!");
+        }
+
+        // Get AudioSource if not assigned
+        if (playerAudioSource == null)
+        {
+            playerAudioSource = GetComponent<AudioSource>();
+            if (playerAudioSource == null)
+            {
+                Debug.LogWarning("No AudioSource found on player! Board placement sounds will not play.");
+            }
         }
     }
 
@@ -40,11 +55,27 @@ public class BoardingSystem : MonoBehaviour
         {
             isHoldingBoardKey = true;
             holdStartTime = Time.time;
+            
+            // Start playing placement sound
+            if (isHoldingHammer && playerAudioSource != null && boardPlacementSound != null)
+            {
+                playerAudioSource.clip = boardPlacementSound;
+                playerAudioSource.loop = false;
+                playerAudioSource.Play();
+                isPlayingPlacementSound = true;
+            }
         }
         else if (Input.GetKeyUp(boardKey))
         {
             isHoldingBoardKey = false;
             lastBoardTime = Time.time; // Reset the cooldown when releasing
+            
+            // Stop placement sound if it's playing
+            if (isPlayingPlacementSound && playerAudioSource != null)
+            {
+                playerAudioSource.Stop();
+                isPlayingPlacementSound = false;
+            }
         }
 
         if (isHoldingBoardKey && Time.time >= lastBoardTime + boardPlacementCooldown)
@@ -54,6 +85,29 @@ public class BoardingSystem : MonoBehaviour
             {
                 TryPlaceBoard();
                 lastBoardTime = Time.time;
+            }
+        }
+
+        // Check for destroyed boards and update counts
+        CheckForDestroyedBoards();
+    }
+
+    private void CheckForDestroyedBoards()
+    {
+        // Create a list of windows to check
+        List<GameObject> windowsToCheck = new List<GameObject>(windowBoards.Keys);
+
+        foreach (GameObject window in windowsToCheck)
+        {
+            if (window == null) continue;
+
+            // Remove any null entries (destroyed boards)
+            windowBoards[window].RemoveAll(board => board == null);
+
+            // If no boards left, remove the window entry
+            if (windowBoards[window].Count == 0)
+            {
+                windowBoards.Remove(window);
             }
         }
     }
