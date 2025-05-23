@@ -24,6 +24,7 @@ public class BoardingSystem : MonoBehaviour
     private HotbarSystem hotbarSystem;
     private Dictionary<GameObject, List<GameObject>> windowBoards = new Dictionary<GameObject, List<GameObject>>();
     private bool isPlayingPlacementSound;
+    private bool canPlaceBoard;
 
     private void Start()
     {
@@ -53,28 +54,35 @@ public class BoardingSystem : MonoBehaviour
         // Check for board placement input
         if (Input.GetKeyDown(boardKey))
         {
-            isHoldingBoardKey = true;
-            holdStartTime = Time.time;
-            
-            // Start playing placement sound
-            if (isHoldingHammer && playerAudioSource != null && boardPlacementSound != null)
+            if (isHoldingHammer)
             {
-                playerAudioSource.clip = boardPlacementSound;
-                playerAudioSource.loop = false;
-                playerAudioSource.Play();
-                isPlayingPlacementSound = true;
+                isHoldingBoardKey = true;
+                holdStartTime = Time.time;
+                canPlaceBoard = false;
+                
+                // Start playing placement sound
+                if (playerAudioSource != null && boardPlacementSound != null)
+                {
+                    playerAudioSource.clip = boardPlacementSound;
+                    playerAudioSource.loop = false;
+                    playerAudioSource.Play();
+                    isPlayingPlacementSound = true;
+                }
             }
         }
         else if (Input.GetKeyUp(boardKey))
         {
-            isHoldingBoardKey = false;
-            lastBoardTime = Time.time; // Reset the cooldown when releasing
-            
-            // Stop placement sound if it's playing
-            if (isPlayingPlacementSound && playerAudioSource != null)
+            if (isHoldingBoardKey)
             {
-                playerAudioSource.Stop();
-                isPlayingPlacementSound = false;
+                isHoldingBoardKey = false;
+                lastBoardTime = Time.time; // Reset the cooldown when releasing
+                
+                // Stop placement sound if it's playing and we didn't place a board
+                if (isPlayingPlacementSound && !canPlaceBoard && playerAudioSource != null)
+                {
+                    playerAudioSource.Stop();
+                    isPlayingPlacementSound = false;
+                }
             }
         }
 
@@ -83,6 +91,7 @@ public class BoardingSystem : MonoBehaviour
             // Check if we've held long enough
             if (Time.time >= holdStartTime + holdTimeRequired)
             {
+                canPlaceBoard = true;
                 TryPlaceBoard();
                 lastBoardTime = Time.time;
             }
