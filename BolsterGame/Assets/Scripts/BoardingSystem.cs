@@ -11,7 +11,7 @@ public class BoardingSystem : MonoBehaviour
     [SerializeField] private float holdTimeRequired = 0.5f; // Time required to hold before placing
     [SerializeField] private KeyCode boardKey = KeyCode.Mouse0;
     [SerializeField] private float maxRandomRotation = 10f; // Maximum random rotation in degrees
-    [SerializeField] private float boardSpacing = 0.5f; // Space between boards
+    [SerializeField] private float windowHeight = 2f; // Approximate height of the window
 
     private Camera mainCamera;
     private float lastBoardTime;
@@ -118,9 +118,28 @@ public class BoardingSystem : MonoBehaviour
         Vector3 windowRight = Vector3.Cross(windowForward, Vector3.up).normalized;
         Vector3 windowUp = Vector3.Cross(windowRight, windowForward).normalized;
 
-        // Calculate offset based on number of existing boards (vertical spacing)
-        float offset = (windowBoards[window].Count - 1) * boardSpacing;
-        Vector3 boardPosition = hit.point + windowUp * offset;
+        // Calculate evenly spaced positions
+        float totalHeight = windowHeight;
+        float sectionHeight = totalHeight / 4f; // Divide into 4 sections (3 boards with gaps)
+        
+        // Calculate vertical position based on board count
+        float verticalOffset;
+        switch (windowBoards[window].Count)
+        {
+            case 0: // First board
+                verticalOffset = -sectionHeight; // Bottom section
+                break;
+            case 1: // Second board
+                verticalOffset = 0f; // Middle section
+                break;
+            case 2: // Third board
+                verticalOffset = sectionHeight; // Top section
+                break;
+            default:
+                return;
+        }
+
+        Vector3 boardPosition = hit.point + windowUp * verticalOffset;
 
         // Calculate base rotation
         Quaternion baseRotation = Quaternion.LookRotation(windowForward);
