@@ -24,6 +24,12 @@ public class ObjectPickup : MonoBehaviour
     [SerializeField] private float maxPushForce = 5f; // Maximum force before dropping object
     [SerializeField] private LayerMask collisionLayers; // Layers to check for collisions
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip[] pickupSounds;
+    [SerializeField] private float minPickupPitch = 0.9f;
+    [SerializeField] private float maxPickupPitch = 1.1f;
+    [SerializeField] private float minTimeAfterCollision = 0.5f; // Minimum time after collision before pickup sound can play
+
     private Camera mainCamera;
     private GameObject heldObject;
     private Rigidbody heldRigidbody;
@@ -32,6 +38,9 @@ public class ObjectPickup : MonoBehaviour
     private Movement playerMovement; // Reference to Movement script
     private Vector3 lastSafePosition;
     private float currentHoldDistance;
+    private AudioSource playerAudioSource;
+    private float lastCollisionTime;
+    private bool wasDropped;
 
     public bool IsHoldingObject => heldObject != null;
     public float HeldObjectMass => heldRigidbody != null ? heldRigidbody.mass : 0f;
@@ -42,6 +51,8 @@ public class ObjectPickup : MonoBehaviour
         playerMovement = GetComponent<Movement>(); // Get reference to Movement script
         currentHoldDistance = holdDistance;
         lastSafePosition = transform.position;
+        playerAudioSource = GetComponent<AudioSource>();
+        lastCollisionTime = 0f; // Initialize to 0 to allow first pickup sound
     }
 
     private void Update()
@@ -111,7 +122,51 @@ public class ObjectPickup : MonoBehaviour
 
                 // Apply movement penalty based on mass
                 ApplyMovementPenalty(rb.mass);
+
+                // Play pickup sound if conditions are met
+                if (ShouldPlayPickupSound())
+                {
+                    PlayPickupSound();
+                }
             }
+        }
+    }
+
+    private bool ShouldPlayPickupSound()
+    {
+        // If the object hasn't collided recently (or ever), play the sound
+        bool timeCheck = Time.time - lastCollisionTime > minTimeAfterCollision || lastCollisionTime == 0f;
+        
+        // Debug logging
+        if (!timeCheck)
+        {
+            Debug.Log($"Pickup sound skipped: Time since last collision ({Time.time - lastCollisionTime:F2}s) < min time ({minTimeAfterCollision}s)");
+        }
+        if (wasDropped)
+        {
+            Debug.Log("Pickup sound skipped: Object was just dropped");
+        }
+        
+        return timeCheck && !wasDropped;
+    }
+
+    private void PlayPickupSound()
+    {
+        if (playerAudioSource != null && pickupSounds != null && pickupSounds.Length > 0)
+        {
+            // Get random sound from array
+            AudioClip randomSound = pickupSounds[Random.Range(0, pickupSounds.Length)];
+            
+            // Randomize pitch
+            playerAudioSource.pitch = Random.Range(minPickupPitch, maxPickupPitch);
+            
+            // Play the sound
+            playerAudioSource.PlayOneShot(randomSound);
+            Debug.Log("Pickup sound played successfully");
+        }
+        else
+        {
+            Debug.LogWarning("Could not play pickup sound: AudioSource or sounds not set up properly");
         }
     }
 
@@ -194,6 +249,9 @@ public class ObjectPickup : MonoBehaviour
 
             // Add force in the direction the camera is facing
             heldRigidbody.AddForce(mainCamera.transform.forward * throwForce, ForceMode.Impulse);
+            
+            // Mark that this object was just dropped
+            wasDropped = true;
         }
 
         // Reset movement speed when dropping object
@@ -227,5 +285,12 @@ public class ObjectPickup : MonoBehaviour
         if (((1 << obj.layer) & pickupableLayers) == 0) return false;
         
         return true;
+    }
+
+    // Called by CollisionSound when the object collides
+    public void OnObjectCollision()
+    {
+        lastCollisionTime = Time.time;
+        wasDropped = false;
     }
 } 
