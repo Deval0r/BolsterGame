@@ -14,17 +14,23 @@ public class BoardingSystem : MonoBehaviour
     private float lastBoardTime;
     private bool isHoldingBoardKey;
     private float holdStartTime;
+    private HotbarSystem hotbarSystem;
 
     private void Start()
     {
         mainCamera = Camera.main;
+        hotbarSystem = GetComponent<HotbarSystem>();
+        if (hotbarSystem == null)
+        {
+            Debug.LogError("HotbarSystem not found on the same GameObject as BoardingSystem!");
+        }
     }
 
     private void Update()
     {
-        // Check if player is holding the hammer (you'll need to implement this check)
-        if (!IsHoldingHammer()) return;
-
+        // Check if player is holding the hammer
+        bool isHoldingHammer = IsHoldingHammer();
+        
         // Check for board placement input
         if (Input.GetKeyDown(boardKey))
         {
@@ -50,8 +56,18 @@ public class BoardingSystem : MonoBehaviour
 
     private bool IsHoldingHammer()
     {
-        // TODO: Implement check for hammer item in hotbar
-        return true; // Temporary return
+        if (hotbarSystem == null)
+        {
+            Debug.LogWarning("HotbarSystem is null!");
+            return false;
+        }
+        
+        bool isHammer = hotbarSystem.IsHoldingHammer();
+        if (isHammer)
+        {
+            Debug.Log("Hammer is selected!");
+        }
+        return isHammer;
     }
 
     private void TryPlaceBoard()
@@ -62,8 +78,17 @@ public class BoardingSystem : MonoBehaviour
             // Check if we hit a window
             if (hit.collider.CompareTag("Window"))
             {
+                Debug.Log("Hit window, placing board!");
                 PlaceBoard(hit);
             }
+            else
+            {
+                Debug.Log("Hit something but not a window. Tag: " + hit.collider.tag);
+            }
+        }
+        else
+        {
+            Debug.Log("No window in range");
         }
     }
 
@@ -71,8 +96,13 @@ public class BoardingSystem : MonoBehaviour
     {
         // Calculate the position and rotation for the board
         Vector3 boardPosition = hit.point;
-        Quaternion boardRotation = Quaternion.LookRotation(hit.normal);
-
+        
+        // Get the window's forward direction (normal of the hit surface)
+        Vector3 windowForward = hit.normal;
+        
+        // Calculate the rotation to align with the window
+        Quaternion boardRotation = Quaternion.LookRotation(windowForward);
+        
         // Instantiate the board
         GameObject board = Instantiate(boardPrefab, boardPosition, boardRotation);
 
@@ -81,8 +111,7 @@ public class BoardingSystem : MonoBehaviour
 
         // Adjust the board's position to be centered on the window
         board.transform.localPosition = Vector3.zero;
-
-        // Rotate the board 90 degrees around its forward axis
-        board.transform.Rotate(0, 0, 90, Space.Self);
+        
+        // No need for additional rotation since the board prefab should be oriented correctly
     }
 } 
