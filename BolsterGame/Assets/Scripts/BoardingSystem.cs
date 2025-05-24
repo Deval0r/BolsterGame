@@ -329,4 +329,14 @@ public class BoardingSystem : MonoBehaviour
         
         return true;
     }
+
+    // Added for MonsterAI support
+    public int GetWindowBoardCount(GameObject window)
+    {
+        if (window == null || !windowBoards.ContainsKey(window))
+        {
+            return 0;
+        }
+        return windowBoards[window].Count;
+    }
 } 
