@@ -474,7 +474,7 @@ GameObject:
   - component: {fileID: 223864929}
   - component: {fileID: 223864928}
   - component: {fileID: 223864927}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -658,8 +658,7 @@ GameObject:
   - component: {fileID: 289869576}
   - component: {fileID: 289869575}
   - component: {fileID: 289869574}
-  - component: {fileID: 289869577}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -755,38 +754,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 289869572}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &289869577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 289869572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 2
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: cdaddb7a5bc85844aa266f2e768495d5, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &379061076
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,7 +763,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 379061077}
-  - component: {fileID: 379061078}
   m_Layer: 0
   m_Name: House
   m_TagString: Untagged
@@ -827,38 +793,6 @@ Transform:
   - {fileID: 1106119008}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &379061078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 379061076}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 1
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: fb97012891366394ab0ef66f8f8a1a17, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &432432459
 GameObject:
   m_ObjectHideFlags: 0
@@ -920,7 +854,6 @@ GameObject:
   - component: {fileID: 433341227}
   - component: {fileID: 433341226}
   - component: {fileID: 433341225}
-  - component: {fileID: 433341229}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -1018,38 +951,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &433341229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433341224}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 38e4eb4253812ae4ab163afabe6950d2, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &536683356
 GameObject:
   m_ObjectHideFlags: 0
@@ -1123,7 +1024,6 @@ GameObject:
   - component: {fileID: 697436606}
   - component: {fileID: 697436605}
   - component: {fileID: 697436604}
-  - component: {fileID: 697436614}
   m_Layer: 0
   m_Name: Player (1)
   m_TagString: Player
@@ -1268,23 +1168,11 @@ MonoBehaviour:
   windowLayer:
     serializedVersion: 2
     m_Bits: 8
-  boardLayer:
-    serializedVersion: 2
-    m_Bits: 64
   boardPrefab: {fileID: 1146694197549502599, guid: 712b694a5dcfd43c2a6b269047abdf0e, type: 3}
   boardPlacementCooldown: 1
   holdTimeRequired: 1.1
-  boardBreakDelay: 0.5
   boardKey: 323
-  maxRandomRotation: 7
-  heightMultiplier: 0.8
-  playerAudioSource: {fileID: 697436604}
-  boardPlacementSound: {fileID: 8300000, guid: 73ee66b365bed5948b7e0f79b0d81203, type: 3}
-  boardSwipeSound: {fileID: 8300000, guid: ffda018d2604a3a4f87e1c6bdee73bba, type: 3}
-  boardDestroySound: {fileID: 8300000, guid: ba4d31ae43e08fa4594c6552c15f7302, type: 3}
-  breakSoundPitchVariation: 0.1
-  placeSoundPitchVariation: 0.05
-  swingSoundPitchVariation: 0.05
+  maxBoardsPerWindow: 3
 --- !u!114 &697436607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1455,38 +1343,6 @@ Transform:
   - {fileID: 2141305596}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &697436614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 697436603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: d53e0fca42ae17a43a9940bcdabced9e, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &816145678
 GameObject:
   m_ObjectHideFlags: 0
@@ -1752,7 +1608,6 @@ GameObject:
   - component: {fileID: 1003261922}
   - component: {fileID: 1003261926}
   - component: {fileID: 1003261927}
-  - component: {fileID: 1003261928}
   m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
@@ -1897,38 +1752,6 @@ MonoBehaviour:
   minImpactForce: 2
   maxImpactForce: 10
   playerCheckRadius: 20
---- !u!114 &1003261928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1003261921}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 3
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: b8185c599b0a3854e90427c9bf92fb70, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &1106119007
 GameObject:
   m_ObjectHideFlags: 0
@@ -1941,7 +1764,7 @@ GameObject:
   - component: {fileID: 1106119011}
   - component: {fileID: 1106119010}
   - component: {fileID: 1106119009}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1957,7 +1780,7 @@ Transform:
   m_GameObject: {fileID: 1106119007}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -2.2782714, y: -0.98888016, z: -1.6016679}
+  m_LocalPosition: {x: -2.28, y: -0.98888016, z: -2.2}
   m_LocalScale: {x: 5.5399995, y: 3.9204, z: 0.42740002}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2049,7 +1872,6 @@ GameObject:
   - component: {fileID: 1138384686}
   - component: {fileID: 1138384685}
   - component: {fileID: 1138384684}
-  - component: {fileID: 1138384688}
   m_Layer: 3
   m_Name: Window
   m_TagString: Window
@@ -2146,38 +1968,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &1138384688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1138384683}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 4
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 4846afc040cc35a4b88f240f9a638249, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &1206871305
 GameObject:
   m_ObjectHideFlags: 0
@@ -2267,7 +2057,7 @@ GameObject:
   - component: {fileID: 1337547544}
   - component: {fileID: 1337547543}
   - component: {fileID: 1337547542}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2375,7 +2165,7 @@ GameObject:
   - component: {fileID: 1411823851}
   - component: {fileID: 1411823850}
   - component: {fileID: 1411823849}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2558,7 +2348,7 @@ GameObject:
   - component: {fileID: 1719771502}
   - component: {fileID: 1719771501}
   - component: {fileID: 1719771500}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2666,8 +2456,9 @@ GameObject:
   - component: {fileID: 1781511767}
   - component: {fileID: 1781511766}
   - component: {fileID: 1781511765}
-  - component: {fileID: 1781511764}
   - component: {fileID: 1781511763}
+  - component: {fileID: 1781511769}
+  - component: {fileID: 1781511770}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -2690,7 +2481,6 @@ MonoBehaviour:
   detectionRange: 20
   decisionUpdateInterval: 1
   deceptionChance: 0.3
-  patienceTime: 5
   windowLayer:
     serializedVersion: 2
     m_Bits: 72
@@ -2699,15 +2489,13 @@ MonoBehaviour:
     m_Bits: 64
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 257
+    m_Bits: 256
   entryPointCheckRadius: 1
   verticalReach: 3
-  walkableAreaCost: 1
-  obstacleAreaCost: 5
-  windowAreaCost: 3
-  jumpAreaCost: 2
+  moveSpeed: 3
   jumpHeight: 2
   jumpDistance: 3
+  jumpCooldown: 2
   tapSounds:
   - {fileID: 8300000, guid: ce4c5bd8451aac54ab5cb96883e73c60, type: 3}
   - {fileID: 8300000, guid: 63b1dccd65f34674886a816971b4571d, type: 3}
@@ -2718,28 +2506,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a98bb35dcdceaf845af48f899f427ed9, type: 3}
   minDeceptionDelay: 2
   maxDeceptionDelay: 5
---- !u!195 &1781511764
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1781511762}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!136 &1781511765
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2825,12 +2591,136 @@ Transform:
   m_GameObject: {fileID: 1781511762}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.51, y: 1.303349, z: 12.12}
+  m_LocalPosition: {x: -10.51, y: 1.303349, z: 11.96}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1781511769
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781511762}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 80
+  m_CollisionDetection: 0
+--- !u!82 &1781511770
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781511762}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1788249806
 GameObject:
   m_ObjectHideFlags: 0
@@ -2843,7 +2733,7 @@ GameObject:
   - component: {fileID: 1788249810}
   - component: {fileID: 1788249809}
   - component: {fileID: 1788249808}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3425,7 +3315,6 @@ GameObject:
   - component: {fileID: 1843660656}
   - component: {fileID: 1843660655}
   - component: {fileID: 1843660660}
-  - component: {fileID: 1843660661}
   m_Layer: 8
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -3570,38 +3459,6 @@ MonoBehaviour:
   minImpactForce: 2
   maxImpactForce: 10
   playerCheckRadius: 20
---- !u!114 &1843660661
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1843660654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 3
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 135687c6ce87416448b269590edee6c1, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &2013410473
 GameObject:
   m_ObjectHideFlags: 1
@@ -3665,7 +3522,6 @@ GameObject:
   - component: {fileID: 2050170818}
   - component: {fileID: 2050170817}
   - component: {fileID: 2050170822}
-  - component: {fileID: 2050170823}
   m_Layer: 8
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -3810,38 +3666,6 @@ MonoBehaviour:
   minImpactForce: 2
   maxImpactForce: 10
   playerCheckRadius: 20
---- !u!114 &2050170823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050170816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 3
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 702ffc05aa30a3549b6c980b4ceb6cfa, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1 &2098995737
 GameObject:
   m_ObjectHideFlags: 0
@@ -3854,7 +3678,7 @@ GameObject:
   - component: {fileID: 2098995741}
   - component: {fileID: 2098995740}
   - component: {fileID: 2098995739}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
