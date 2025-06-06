@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Instance = this;
         rb = GetComponent<Rigidbody>();
+        Physics.gravity *= 8f;
         if (rb != null)
         {
             rb.freezeRotation = true;
