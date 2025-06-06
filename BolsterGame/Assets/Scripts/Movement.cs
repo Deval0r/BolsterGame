@@ -5,61 +5,68 @@ public class PlayerMovement : MonoBehaviour
     public static PlayerMovement Instance { get; private set; }
 
     [Header("Springy Side Movement Settings")]
-    public float sideMoveRange = 5f; // How far left/right the player can move
-    public float springStrength = 20f; // Spring force
-    public float damping = 4f; // Damping force
-    public float sideInputSpeed = 10f; // How quickly targetX changes with input
+    public float sideMoveRange = 5f;   // Lane boundaries for lateral movement
+    public float springStrength = 20f; // Force multiplier for lateral correction
+    public float damping = 4f;         // Damping factor
 
-    [Header("Player Offset Settings")]
-    public float zOffset = 5f; // Player stays this far ahead of the camera
+    private float targetX = 0f;        // Desired lane x-position
+    private float velocityX = 0f;      // Lateral computed velocity from spring-damper
+    private Rigidbody rb;
 
-    private float targetX = 0f;
-    private float velocityX = 0f;
-    private Transform camTransform;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
         Instance = this;
-        camTransform = Camera.main.transform;
+        rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+        }
+
+        // DOUBLE THE GRAVITY: note this applies globally!
+        Physics.gravity *= 8f;
+
+        // Set initial target to current x position.
         targetX = transform.position.x;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        // Three-lane input system
+        // Process horizontal input via a three-lane system.
         float input = Input.GetAxisRaw("Horizontal");
         if (input < -0.1f)
-            targetX = -sideMoveRange; // Left
+            targetX = -sideMoveRange;  // Left lane
         else if (input > 0.1f)
-            targetX = sideMoveRange; // Right
+            targetX = sideMoveRange;   // Right lane
         else
-            targetX = 0f; // Center
+            targetX = 0f;              // Center lane
+    }
 
-        // Spring-damper system for x movement
-        float displacement = targetX - transform.position.x;
+    private void FixedUpdate()
+    {
+        // Compute spring-damper dynamics on the x-axis.
+        float currentX = transform.position.x;
+        float displacement = targetX - currentX;
         float springForce = displacement * springStrength;
-        float damper = velocityX * damping;
-        float force = springForce - damper;
-        velocityX += force * Time.deltaTime;
-        transform.position += new Vector3(velocityX * Time.deltaTime, 0, 0);
+        float dampingForce = velocityX * damping;
+        float netForce = springForce - dampingForce;
+        velocityX += netForce * Time.fixedDeltaTime;
 
-        // Stop jitter: snap to target if close enough
+        // Snap horizontally if nearly aligned.
         if (Mathf.Abs(displacement) < 0.01f && Mathf.Abs(velocityX) < 0.01f)
         {
-            Vector3 pos = transform.position;
-            pos.x = targetX;
-            transform.position = pos;
+            currentX = targetX;
             velocityX = 0f;
         }
 
-        // Follow camera's z position with offset
-        if (camTransform != null)
-        {
-            Vector3 pos = transform.position;
-            pos.z = camTransform.position.z + zOffset;
-            transform.position = pos;
-        }
+        // Retrieve the forward speed from the camera controller.
+        float forwardSpeed = (CameraSpeedController.Instance != null)
+                                 ? CameraSpeedController.Instance.CurrentSpeed
+                                 : 0f;
+
+        // Combine computed x velocity with preserved y (gravity will now be stronger) and forward z component.
+        Vector3 newVelocity = new Vector3(velocityX, rb.linearVelocity.y, forwardSpeed);
+        rb.linearVelocity = newVelocity;
     }
 }

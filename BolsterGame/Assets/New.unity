@@ -528,10 +528,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sideMoveRange: 15
-  springStrength: 20
+  springStrength: 10
   damping: 4
-  sideInputSpeed: 10
-  zOffset: 5
 --- !u!135 &693827676
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -927,7 +925,7 @@ Transform:
   m_GameObject: {fileID: 1369134136}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 9.533428}
+  m_LocalPosition: {x: 0, y: 1, z: -17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -946,9 +944,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 100
-  acceleration: 5
-  xSpringStrength: 20
-  xDamping: 4
+  acceleration: 4
+  followSpeed: 8
+  zOffset: 5
+  rotationSmoothSpeed: 5
+  cameraPitchOffset: -10
+  maxRollAngle: 25
 --- !u!114 &1369134141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,16 +1103,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slopePrefab: {fileID: 924754477}
   spikePrefab: {fileID: 196738831}
-  spawnDistance: 30
+  spawnDistance: 300
   timeBetweenSpawns: 2
   spikeChanceStart: 0.1
   spikeChanceMax: 0.8
   spikeChanceRampTime: 60
   lanePositions:
-  - -5
+  - -10
   - 0
-  - 5
+  - 10
   planeY: 0
+  slopeReference: {fileID: 924754481}
+  spikeReference: {fileID: 196738835}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
