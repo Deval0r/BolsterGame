@@ -7,6 +7,7 @@ TagManager:
   - Window
   - Board
   - Spike
+  - FlightTrigger
   layers:
   - Default
   - TransparentFX

@@ -68,6 +68,19 @@ public class CameraSpeedController : MonoBehaviour
         {
             backgroundMusic = FindObjectOfType<AudioSource>();
         }
+
+        // Set initial camera rotation to face forward
+        if (PlayerMovement.Instance != null)
+        {
+            Vector3 toPlayer = PlayerMovement.Instance.transform.position - transform.position;
+            Vector3 horizontalToPlayer = new Vector3(toPlayer.x, 0f, toPlayer.z);
+            float initialYaw = Mathf.Atan2(horizontalToPlayer.x, horizontalToPlayer.z) * Mathf.Rad2Deg;
+            if (initialYaw < 0)
+            {
+                initialYaw += 360f;
+            }
+            transform.rotation = Quaternion.Euler(cameraPitchOffset, initialYaw, 0f);
+        }
     }
 
     void Update()
@@ -88,6 +101,14 @@ public class CameraSpeedController : MonoBehaviour
             currentStamina = Mathf.Max(0, currentStamina - staminaDrainRate * Time.deltaTime);
             targetFOV = boostFOV;
             targetMusicPitch = boostMusicPitch;
+
+            // If stamina runs out, simulate releasing the W key
+            if (currentStamina <= 0)
+            {
+                // Simulate key release by sending a key up event
+                Input.simulateMouseWithTouches = false;
+                Input.ResetInputAxes();
+            }
         }
         else
         {
@@ -125,24 +146,26 @@ public class CameraSpeedController : MonoBehaviour
             if (horizontalToPlayer.sqrMagnitude > 0.001f)
             {
                 desiredYaw = Mathf.Atan2(horizontalToPlayer.x, horizontalToPlayer.z) * Mathf.Rad2Deg;
-                // Ensure the yaw is always positive to prevent the camera from rotating the wrong way
                 if (desiredYaw < 0)
                 {
                     desiredYaw += 360f;
                 }
             }
 
-            // Calculate roll based on the player's x position.
             float sideRange = PlayerMovement.Instance.sideMoveRange;
             if (Mathf.Abs(sideRange) < 0.001f)
-                sideRange = 1f; // Prevent division by zero.
+                sideRange = 1f;
             float computedRoll = -(PlayerMovement.Instance.transform.position.x / sideRange) * maxRollAngle;
 
-            // Build the target rotation: fixed pitch, dynamic yaw and roll.
-            Quaternion targetRotation = Quaternion.Euler(cameraPitchOffset, desiredYaw, computedRoll);
+            // Use a shorter smoothing time for initial rotation
+            float currentRotationSpeed = rotationSmoothSpeed;
+            if (Quaternion.Angle(transform.rotation, Quaternion.Euler(cameraPitchOffset, desiredYaw, computedRoll)) > 90f)
+            {
+                currentRotationSpeed *= 2f; // Rotate faster for large angle differences
+            }
 
-            // Smoothly interpolate towards the target rotation.
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothSpeed);
+            Quaternion targetRotation = Quaternion.Euler(cameraPitchOffset, desiredYaw, computedRoll);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * currentRotationSpeed);
         }
     }
 
