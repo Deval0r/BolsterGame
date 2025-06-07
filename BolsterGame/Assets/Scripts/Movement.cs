@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     private float velocityX = 0f; // Lateral velocity computed via spring-damper
     private Rigidbody rb;
     private bool exploded = false;
-    private bool isInFlightMode = false;
+    public bool isInFlightMode { get; private set; } = false;
 
     private void Awake()
     {
@@ -70,15 +70,23 @@ public class PlayerMovement : MonoBehaviour
         else
             targetX = 0f;             // Center lane
 
-        // Handle flight mode boost
-        if (isInFlightMode && Input.GetKey(KeyCode.W))
+        // Handle flight mode
+        if (isInFlightMode)
         {
-            // Apply upward force when boosting in flight mode
-            rb.AddForce(Vector3.up * flightUpForce, ForceMode.Force);
-            
-            // Clamp the upward velocity
+            if (Input.GetKey(KeyCode.W))
+            {
+                // Apply constant upward force when holding W in flight mode
+                rb.AddForce(Vector3.up * flightUpForce, ForceMode.Force);
+            }
+            else
+            {
+                // Apply downward force when not holding W
+                rb.AddForce(Vector3.down * flightGravity, ForceMode.Force);
+            }
+
+            // Clamp the vertical velocity
             Vector3 velocity = rb.linearVelocity;
-            velocity.y = Mathf.Min(velocity.y, maxFlightVelocity);
+            velocity.y = Mathf.Clamp(velocity.y, -maxFlightVelocity, maxFlightVelocity);
             rb.linearVelocity = velocity;
         }
     }
@@ -108,13 +116,17 @@ public class PlayerMovement : MonoBehaviour
                                  ? CameraSpeedController.Instance.CurrentSpeed
                                  : 0f;
 
-        Vector3 newVelocity = new Vector3(velocityX, rb.linearVelocity.y, forwardSpeed);
-        rb.linearVelocity = newVelocity;
-
-        // Apply flight mode gravity
-        if (isInFlightMode)
+        // Only apply forward speed if not in flight mode
+        if (!isInFlightMode)
         {
-            rb.AddForce(Vector3.down * flightGravity, ForceMode.Force);
+            Vector3 newVelocity = new Vector3(velocityX, rb.linearVelocity.y, forwardSpeed);
+            rb.linearVelocity = newVelocity;
+        }
+        else
+        {
+            // In flight mode, maintain forward momentum
+            Vector3 newVelocity = new Vector3(velocityX, rb.linearVelocity.y, forwardSpeed);
+            rb.linearVelocity = newVelocity;
         }
     }
 
@@ -124,15 +136,11 @@ public class PlayerMovement : MonoBehaviour
         if (other.CompareTag("FlightTrigger"))
         {
             isInFlightMode = true;
-            // Disable normal gravity and enable flight mode gravity
+            // Disable normal gravity
             Physics.gravity = Vector3.zero;
         }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        // Check if we exited a flight mode trigger
-        if (other.CompareTag("FlightTrigger"))
+        // Check if we entered a normal mode trigger
+        else if (other.CompareTag("NormalModeTrigger"))
         {
             isInFlightMode = false;
             // Restore normal gravity

@@ -16,6 +16,9 @@ public class CameraSpeedController : MonoBehaviour
     [Header("Camera Follow Settings")]
     public float followSpeed = 5f;  // Smoothing factor for following the player's position
     public float zOffset = 10f;     // Offset on the z-axis relative to the player
+    public float flightModeYFollowSpeed = 8f; // How quickly the camera follows Y position in flight mode
+    public float normalYOffset = 0f;      // Y offset in normal mode
+    public float flightModeYOffset = 5f;  // Y offset in flight mode
 
     [Header("Camera Rotation Settings")]
     public float rotationSmoothSpeed = 5f; // Smoothing factor for rotation changes
@@ -25,6 +28,7 @@ public class CameraSpeedController : MonoBehaviour
     [Header("FOV Settings")]
     public float normalFOV = 60f;
     public float boostFOV = 75f;
+    public float flightModeFOV = 90f;  // FOV in flight mode
     public float fovChangeSpeed = 5f;
 
     [Header("UI References")]
@@ -41,6 +45,7 @@ public class CameraSpeedController : MonoBehaviour
     private Camera mainCamera;
     private float targetFOV;
     private float targetMusicPitch;
+    private float targetY;
 
     private void Awake()
     {
@@ -56,6 +61,7 @@ public class CameraSpeedController : MonoBehaviour
         currentStamina = maxStamina;
         targetFOV = normalFOV;
         targetMusicPitch = normalMusicPitch;
+        targetY = transform.position.y;
         
         if (staminaBar != null)
         {
@@ -94,7 +100,7 @@ public class CameraSpeedController : MonoBehaviour
 
     private void HandleSpeedBoost()
     {
-        bool isBoosting = Input.GetKey(KeyCode.W) && currentStamina > 0;
+        bool isBoosting = Input.GetKey(KeyCode.W) && currentStamina > 0 && !PlayerMovement.Instance.isInFlightMode;
         
         if (isBoosting)
         {
@@ -113,7 +119,7 @@ public class CameraSpeedController : MonoBehaviour
         else
         {
             currentStamina = Mathf.Min(maxStamina, currentStamina + staminaRegenRate * Time.deltaTime);
-            targetFOV = normalFOV;
+            targetFOV = PlayerMovement.Instance.isInFlightMode ? flightModeFOV : normalFOV;
             targetMusicPitch = normalMusicPitch;
         }
     }
@@ -121,7 +127,7 @@ public class CameraSpeedController : MonoBehaviour
     private void UpdateSpeed()
     {
         float targetSpeed = maxSpeed;
-        if (Input.GetKey(KeyCode.W) && currentStamina > 0)
+        if (Input.GetKey(KeyCode.W) && currentStamina > 0 && !PlayerMovement.Instance.isInFlightMode)
         {
             targetSpeed *= boostSpeedMultiplier;
         }
@@ -131,13 +137,26 @@ public class CameraSpeedController : MonoBehaviour
 
         if (PlayerMovement.Instance != null)
         {
-            // Smoothly follow the player's x and z position.
+            // Update target Y position for flight mode
+            if (PlayerMovement.Instance.isInFlightMode)
+            {
+                targetY = PlayerMovement.Instance.transform.position.y + flightModeYOffset;
+            }
+            else
+            {
+                targetY = PlayerMovement.Instance.transform.position.y + normalYOffset;
+            }
+
+            // Smoothly follow the player's position
             Vector3 targetPos = new Vector3(
                 PlayerMovement.Instance.transform.position.x,
-                transform.position.y,
+                targetY,
                 PlayerMovement.Instance.transform.position.z + zOffset
             );
-            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * followSpeed);
+
+            // Use different follow speeds for Y position in flight mode
+            float currentFollowSpeed = PlayerMovement.Instance.isInFlightMode ? flightModeYFollowSpeed : followSpeed;
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * currentFollowSpeed);
 
             // Determine the desired yaw to face the player.
             Vector3 toPlayer = PlayerMovement.Instance.transform.position - transform.position;

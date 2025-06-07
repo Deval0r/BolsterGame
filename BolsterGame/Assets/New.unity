@@ -964,11 +964,15 @@ MonoBehaviour:
   maxStamina: 100
   followSpeed: 8
   zOffset: 5
+  flightModeYFollowSpeed: 16
+  normalYOffset: 0
+  flightModeYOffset: -0.5
   rotationSmoothSpeed: 5
   cameraPitchOffset: -10
   maxRollAngle: 25
   normalFOV: 60
   boostFOV: 100
+  flightModeFOV: 90
   fovChangeSpeed: 5
   staminaBar: {fileID: 1332375614}
   backgroundMusic: {fileID: 0}
@@ -1531,9 +1535,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 7935425622572002956, guid: 4323b953b65d9476095dfad5374069ce, type: 3}
+      propertyPath: flightGravity
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7935425622572002956, guid: 4323b953b65d9476095dfad5374069ce, type: 3}
+      propertyPath: flightUpForce
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7935425622572002956, guid: 4323b953b65d9476095dfad5374069ce, type: 3}
       propertyPath: explosionSound
       value: 
       objectReference: {fileID: 8300000, guid: 14578807fb3352e43ba23e0a0e65c996, type: 3}
+    - target: {fileID: 7935425622572002956, guid: 4323b953b65d9476095dfad5374069ce, type: 3}
+      propertyPath: maxFlightVelocity
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 7935425622572002956, guid: 4323b953b65d9476095dfad5374069ce, type: 3}
       propertyPath: explosionPiecePrefab
       value: 
