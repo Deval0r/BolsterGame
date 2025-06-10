@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     public float flightUpForce = 10f;      // Force applied when boosting in flight mode
     public float maxFlightVelocity = 15f;  // Maximum upward velocity in flight mode
     public float flightGravity = 20f;      // Gravity applied in flight mode
-    public float normalGravity = 78.4f;    // Normal gravity (8 * 9.8)
+    public float normalGravity = 78.4f;    // Normal gravity (roughly 8 * 9.8)
 
     [Header("Explosion Settings")]
     [Tooltip("Prefab for a piece that spawns on explosion. It should have a Rigidbody component.")]
@@ -70,12 +70,12 @@ public class PlayerMovement : MonoBehaviour
         else
             targetX = 0f;             // Center lane
 
-        // Handle flight mode
+        // Handle flight mode: applying upward or downward forces based on input.
         if (isInFlightMode)
         {
             if (Input.GetKey(KeyCode.W))
             {
-                // Apply constant upward force when holding W in flight mode
+                // Apply constant upward force when holding W
                 rb.AddForce(Vector3.up * flightUpForce, ForceMode.Force);
             }
             else
@@ -84,10 +84,14 @@ public class PlayerMovement : MonoBehaviour
                 rb.AddForce(Vector3.down * flightGravity, ForceMode.Force);
             }
 
-            // Clamp the vertical velocity
+            // Clamp the vertical velocity.
             Vector3 velocity = rb.linearVelocity;
             velocity.y = Mathf.Clamp(velocity.y, -maxFlightVelocity, maxFlightVelocity);
             rb.linearVelocity = velocity;
+
+            // *** Air Time Bonus Fix ***
+            // Add the elapsed time to ScoreManager's air time bonus.
+            ScoreManager.Instance.AddAirTimeBonus(Time.deltaTime);
         }
     }
 
@@ -104,53 +108,50 @@ public class PlayerMovement : MonoBehaviour
         float netForce = springForce - dampingForce;
         velocityX += netForce * Time.fixedDeltaTime;
 
-        // Snap into lane if already nearly aligned to avoid jitter.
+        // Snap into lane if nearly aligned to avoid jitter.
         if (Mathf.Abs(displacement) < 0.01f && Mathf.Abs(velocityX) < 0.01f)
         {
             currentX = targetX;
             velocityX = 0f;
         }
 
-        // Use the forward speed from the camera controller, if available.
+        // Use forward speed from the camera controller if available.
         float forwardSpeed = (CameraSpeedController.Instance != null)
-                                 ? CameraSpeedController.Instance.CurrentSpeed
-                                 : 0f;
+                             ? CameraSpeedController.Instance.CurrentSpeed
+                             : 0f;
 
-        // Only apply forward speed if not in flight mode
-        if (!isInFlightMode)
-        {
-            Vector3 newVelocity = new Vector3(velocityX, rb.linearVelocity.y, forwardSpeed);
-            rb.linearVelocity = newVelocity;
-        }
-        else
-        {
-            // In flight mode, maintain forward momentum
-            Vector3 newVelocity = new Vector3(velocityX, rb.linearVelocity.y, forwardSpeed);
-            rb.linearVelocity = newVelocity;
-        }
+        // Apply horizontal, vertical, and forward motion.
+        Vector3 newVelocity = new Vector3(velocityX, rb.linearVelocity.y, forwardSpeed);
+        rb.linearVelocity = newVelocity;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Check if we entered a flight mode trigger
+        if (other.CompareTag("Spike"))
+        {
+            ScoreManager.Instance.AddObstacleBonus();
+        }
+        
+        // Check if we entered a flight mode trigger.
         if (other.CompareTag("FlightTrigger"))
         {
             isInFlightMode = true;
-            // Disable normal gravity
+            // Disable normal gravity (set to zero).
             Physics.gravity = Vector3.zero;
         }
-        // Check if we entered a normal mode trigger
+        // Check if we entered a normal mode trigger.
+        // Ensure that the tag "NormalModeTrigger" exists in your Unity project's Tag Manager.
         else if (other.CompareTag("NormalModeTrigger"))
         {
             isInFlightMode = false;
-            // Restore normal gravity
+            // Restore normal gravity.
             Physics.gravity = new Vector3(0, -normalGravity, 0);
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // If the player collides with a spike (tagged "Spike") and hasn't exploded yet, trigger the explosion.
+        // Trigger explosion on collision with spike, if not already exploded.
         if (!exploded && collision.gameObject.CompareTag("Spike"))
         {
             Explode();
@@ -161,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
     {
         exploded = true;
 
-        // Play explosion sound from camera's audio source
+        // Play explosion sound from the camera's audio source.
         if (explosionSound != null && CameraSpeedController.Instance != null)
         {
             AudioSource cameraAudio = CameraSpeedController.Instance.GetComponent<AudioSource>();
@@ -178,7 +179,7 @@ public class PlayerMovement : MonoBehaviour
             mesh.enabled = false;
         }
 
-        // Also disable the player's collider to prevent further collisions.
+        // Disable the player's collider to prevent further collisions.
         Collider col = GetComponent<Collider>();
         if (col != null)
         {
@@ -191,18 +192,18 @@ public class PlayerMovement : MonoBehaviour
         // Spawn explosion pieces.
         for (int i = 0; i < numExplosionPieces; i++)
         {
-            // Slightly randomize the spawn position within a small sphere.
+            // Randomize spawn position within a small sphere.
             Vector3 spawnPos = transform.position + Random.insideUnitSphere * 0.5f;
             GameObject piece = Instantiate(explosionPiecePrefab, spawnPos, Random.rotation);
 
-            // Apply explosion force, if the piece has a Rigidbody.
+            // Apply explosion force if the piece has a Rigidbody.
             Rigidbody pieceRb = piece.GetComponent<Rigidbody>();
             if (pieceRb != null)
             {
                 pieceRb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
             }
 
-            // Automatically destroy the piece after a set time.
+            // Destroy the piece after a set time.
             Destroy(piece, pieceLifeTime);
         }
 

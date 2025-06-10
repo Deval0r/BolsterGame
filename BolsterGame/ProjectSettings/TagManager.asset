@@ -8,6 +8,7 @@ TagManager:
   - Board
   - Spike
   - FlightTrigger
+  - NormalModeTrigger
   layers:
   - Default
   - TransparentFX
